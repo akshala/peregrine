@@ -1,10 +1,10 @@
 # Peregrine
 
 ## eQTL
-The eQTL folder has the code for generating enhancer-gene links from eQTL data. 
+The eQTL folder has the code for generating enhancer-gene links from eQTL data taken from the source - https://storage.googleapis.com/gtex_analysis_v7/single_tissue_eqtl_data/GTEx_Analysis_v7_eQTL.tar.gz. 
 
 ```
-python3 eqtl.py
+python3 eQTL/eqtl.py
 ```
 
 Running the above command generates linksDBeqtl and linksDBnumeqtl files that are the concatention of all the files of respective nature generated from different tissue variant gene pair files. 
@@ -37,4 +37,18 @@ enhancer	gene	tissue	number_of_eQTL	assay
 1411	HUMAN|HGNC=28793|UniProtKB=O95568	23	1	2
 16	HUMAN|HGNC=28228|UniProtKB=Q96DD0	23	1	2
 1630	HUMAN|HGNC=11984|UniProtKB=Q6ZVM7	23	1	2
+```
+
+## heirarchical TAD
+The heirarchicalTAD folder has the code for generating enhancer-gene links from heirarchical TAD data taken from the source - https://www.cs.huji.ac.il/w~tommy/PSYCHIC/. 
+
+```
+python3 heirarchicalTAD/heirarchicalTAD.py
+```
+
+## TAD
+The tad folder has the code for generating enhancer-gene links from  TAD data taken from the source - https://www.encodeproject.org/files/ENCFF274VJU/. 
+
+```
+python3 tad/tad.py
 ```
