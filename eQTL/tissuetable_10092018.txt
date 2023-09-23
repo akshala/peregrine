@@ -1,0 +1,82 @@
+1	Adipose Subcutaneous
+2	Adipose Visceral Omentum
+3	Adrenal Gland
+4	Artery Aorta
+5	Artery Coronary
+6	Artery Tibial
+7	Brain Amygdala
+8	Brain Anterior cingulate cortex BA24
+9	Brain Caudate basal ganglia
+10	Brain Cerebellar Hemisphere
+11	Brain Cerebellum
+12	Brain Cortex
+13	Brain Frontal Cortex BA9
+14	Brain Hippocampus
+15	Brain Hypothalamus
+16	Brain Nucleus accumbens basal ganglia
+17	Brain Putamen basal ganglia
+18	Brain Spinal cord cervical c-1
+19	Brain Substantia nigra
+20	Breast Mammary Tissue
+21	Cells EBV-transformed lymphocytes
+22	Cells Transformed fibroblasts
+23	Colon Sigmoid
+24	Colon Transverse
+25	Esophagus Gastroesophageal Junction
+26	Esophagus Mucosa
+27	Esophagus Muscularis
+28	Heart Atrial Appendage
+29	Heart Left Ventricle
+30	Liver
+31	Lung
+32	Minor Salivary Gland
+33	Muscle Skeletal
+34	Nerve Tibial
+35	Ovary
+36	Pancreas
+37	Pituitary
+38	Prostate
+39	Skin Not Sun Exposed Suprapubic
+40	Skin Sun Exposed Lower leg
+41	Small Intestine Terminal Ileum
+42	Spleen
+43	Stomach
+44	Testis
+45	Thyroid
+46	Uterus
+47	Vagina
+48	Whole Blood
+49	GM12878
+50	hES
+51	hIMR90
+52	HMEC
+53	HUVEC
+54	IMR90
+55	K562
+56	KBM7
+57	NHEK
+58	NB4
+59	HCT116
+60	GM12892
+61	MCF7
+62	HeLa-S3
+63	GM12891
+64	A549
+65	Caki2
+66	G401
+67	LNCap_clone_FGC
+68	NCI-H460
+69	Panc1
+70	RPMI-7951
+71	SJCRH30
+72	SK-MEL-5
+73	SK-N-DZ_not_treated_and_treated_with_dimethyl_sulfoxide
+74	SK-N-MC
+75	T47D
+76	ACHN
+77	DLD1
+78	astrocyte_of_the_cerebellum
+79	brain_microvascular_endothelial_cell
+80	brain_pericyte
+81	endometrial_microvascular_endothelial_cells
+82	endothelial_cell_of_hepatic_sinusoid
