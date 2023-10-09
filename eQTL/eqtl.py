@@ -182,18 +182,6 @@ def eqtllinks(input_file, output_file):
         tissue = '_'.join(tissue)
         match.setdefault(enhID, {}).setdefault(gene, {}).setdefault(snp, {}).setdefault(pval, {})[tissue] = 1
 
-    tissue_file = open('tissuetable_10092018.txt', 'r')
-    tissue_lines = tissue_file.readlines()
-    tissue_file.close()
-
-    tissues = {}
-    for line in tissue_lines:
-        line_split = line.strip().split('\t')
-        tissueID = line_split[0]
-        tissue = line_split[1]
-        tissue = tissue.replace(' ', '_')
-        tissues[tissue] = tissueID
-
     out = open(output_file, 'w')
     for enhID in match:
         for gene in match[enhID]:
@@ -249,6 +237,18 @@ for line in pantherGene_lines:
     ensg = line_split[1]
     panther_mapping[ensg] = panth
 
+tissue_file = open('tissuetable_10092018.txt', 'r')
+tissue_lines = tissue_file.readlines()
+tissue_file.close()
+
+tissues = {}
+for line in tissue_lines:
+    line_split = line.strip().split('\t')
+    tissueID = line_split[0]
+    tissue = line_split[1]
+    tissue = tissue.replace(' ', '_')
+    tissues[tissue] = tissueID
+
 gene_pair_gz_files = glob.glob(os.path.join('GTEx_Analysis_v7_eQTL', '*variant_gene_pairs.txt.gz'))
 links_files = []
 linksnum_files = []
@@ -260,32 +260,32 @@ for gene_pair_gz_file in gene_pair_gz_files:
     os.makedirs(folder)
     gene_pair_file = os.path.basename(gene_pair_gz_file).strip('.gz')
 
-    extract the txt file from the zip file and place it in the created folder
+    # extract the txt file from the zip file and place it in the created folder
     with gzip.open(gene_pair_gz_file, 'rb') as gz_file:
         content = gz_file.read()
     with open(os.path.join(folder, gene_pair_file), 'wb') as extracted_file:
         extracted_file.write(content)
 
-    split(os.path.join(folder, gene_pair_file))
+    # split(os.path.join(folder, gene_pair_file))
 
     trim(os.path.join(folder, gene_pair_file))
 
-    chr = 'chr13'
     tissue = gene_pair_file.split('.')[0]
+    print(tissue)
 
-    eqtl_process(os.path.join(folder, 'newdata' + gene_pair_file), os.path.join(folder, chr + tissue + '_eqtl'))
+    eqtl_process(os.path.join(folder, 'newdata' + gene_pair_file), os.path.join(folder, tissue + '_eqtl'))
 
-    eliminateOverlap(os.path.join(folder, chr + tissue + '_eqtl'), os.path.join(folder, chr + tissue + '_eqtl2'), os.path.join(folder, 'overlaps'), os.path.join(folder, 'unmatched'))
+    eliminateOverlap(os.path.join(folder, tissue + '_eqtl'), os.path.join(folder, tissue + '_eqtl2'), os.path.join(folder, 'overlaps'), os.path.join(folder, 'unmatched'))
 
-    bedtoolIntersect('CREbedDBenhancers_10092018', os.path.join(folder, chr + tissue + '_eqtl2'), os.path.join(folder, chr + tissue + '_intersect'))
+    bedtoolIntersect('CREbedDBenhancers_10092018', os.path.join(folder, tissue + '_eqtl2'), os.path.join(folder, tissue + '_intersect'))
 
-    eqtllinks(os.path.join(folder, chr + tissue + '_intersect'), os.path.join(folder, 'links_' + chr + tissue + '_eqtl'))
+    eqtllinks(os.path.join(folder, tissue + '_intersect'), os.path.join(folder, 'links_' + tissue + '_eqtl'))
 
-    links_files.append(os.path.join(folder, 'links_' + chr + tissue + '_eqtl'))
+    links_files.append(os.path.join(folder, 'links_' + tissue + '_eqtl'))
 
-    linksDB(os.path.join(folder, 'links_' + chr + tissue + '_eqtl'), os.path.join(folder, 'linksnum_' + chr + tissue + '_eqtl'))
+    linksDB(os.path.join(folder, 'links_' + tissue + '_eqtl'), os.path.join(folder, 'linksnum_' + tissue + '_eqtl'))
 
-    linksnum_files.append(os.path.join(folder, 'linksnum_' + chr + tissue + '_eqtl'))
+    linksnum_files.append(os.path.join(folder, 'linksnum_' + tissue + '_eqtl'))
 
 concatenate(links_files, 'linksDBeqtl')
 concatenate(linksnum_files, 'linksDBnumeqtl')
