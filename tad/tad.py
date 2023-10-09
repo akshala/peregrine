@@ -1,6 +1,7 @@
 from math import floor, ceil
 from pybedtools import BedTool
 import os
+from collections import defaultdict
 
 def bTADoverlap(input_file, output_file, cell_type):
     tad_file = open(input_file, 'r')
@@ -110,18 +111,18 @@ def TADlinks(gene_file, enhancer_tad_file, output_file):
         tadenh.setdefault(enhID, {})[tad] = 1
 
     out = open(output_file, 'w')
-    final = {}
-    for enh in sorted(tadenh.keys()):
-        for tad in sorted(tadenh[enh].keys()):
+    final = defaultdict(lambda: defaultdict(dict))
+    for enh in tadenh.keys():
+        for tad in tadenh[enh].keys():
             if tad in tadgenes:
-                for gene in sorted(tadgenes[tad].keys()):
+                for gene in tadgenes[tad].keys():
                     panthID = panther_mapping.get(gene, '')
                     cell = tad.split('\t')[1]
-                    final.setdefault(enh, {}).setdefault(panthID, {})[cell] = 1
+                    final[enh][panthID][cell] = 1
 
-    for one in sorted(final.keys()):
-        for two in sorted(final[one].keys()):
-            for three in sorted(final[one][two].keys()):
+    for one in final.keys():
+        for two in final[one].keys():
+            for three in final[one][two].keys():
                 if one and two and three:
                     out.write(f"{one}\t{two}\t{three}\t3\n")
     out.close()
@@ -217,6 +218,7 @@ def orderlinks(input_file, output_file):
 
     hash = {}
     tissues = {}
+    genes = {}
     count = 0
 
     for line in lines:
@@ -231,7 +233,8 @@ def orderlinks(input_file, output_file):
                 count += 1
                 out.write(f"{enhancer}\t{geen}\t{cell}\t{assay}\n")
 
-print(f"This file contains {len(hash)} different enhancers linked to {len(genes)} genes in {len(tissues)} tissues.")
+    print(f"This file contains {len(hash)} different enhancers linked to {len(genes)} genes in {len(tissues)} tissues.")
+    print(f"Processed {count} records.")
 
 pantherGene_file = open('pantherGeneList.txt', 'r')
 pantherGene_lines = pantherGene_file.readlines()
@@ -275,7 +278,6 @@ chromosomes.append('chrY')
 linkbTAD_list = []
 
 for chr in chromosomes:
-    print(chr)
     TADlinks(chr+'TSSbTAD', chr+'enhancersbTAD', chr+'linksbTAD')
     linkbTAD_list.append(chr+'linksbTAD')
 concatenate(linkbTAD_list, 'linksbTAD')
@@ -287,5 +289,5 @@ tissuesReplace('linkstTAD', 'linkstTADtissues')
 
 concatenate(['linksbTADtissues', 'linkstTADtissues'], 'linksTADtissues')
 
-# cutdowntad('linksDBchia', 'linksDBnumeqtl', 'PSYCHIClinksDB ', 'linkstTADtissues', 'selecttTAD')
-# orderlinks('selectTAD', 'linksDBtad')
+cutdowntad('linksDBchia', 'linksDBnumeqtl', 'PSYCHIClinksDB ', 'linkstTADtissues', 'selecttTAD')
+orderlinks('selectTAD', 'linksDBtad')
