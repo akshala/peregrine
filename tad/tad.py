@@ -88,72 +88,68 @@ def TADlinks(gene_file, enhancer_tad_file, output_file):
     '''
         Trim down to a file showing just the gene>enhancer>cell>assay
     '''
-    tss_file = open(gene_file, 'r')
-    tss_lines = tss_file.readlines()
-    tss_file.close()
 
-    tadgenes = {} 
-    for line in tss_lines:
-        chr, start, end, geneID, one, two, three, tad, tissue = line.strip().split('\t')
-        cell = tissue.split('|')[1]
-        tad = tad + '\t' + cell
-        tadgenes.setdefault(tad, {})[geneID] = 1
+    tadgenes = defaultdict(dict)
+    with open(gene_file, 'r') as tss_file:
+        for line in tss_file:
+            chr, start, end, geneID, one, two, three, tad, tissue = line.strip().split('\t')
+            cell = tissue.split('|')[1]
+            tad = tad + '\t' + cell
+            tadgenes[tad][geneID] = 1
 
-    enh_file = open(enhancer_tad_file, 'r')
-    enh_lines = enh_file.readlines()
-    enh_file.close()
+    tadenh = defaultdict(dict)
+    with open(enhancer_tad_file, 'r') as enh_file:
+        for line in enh_file:
+            chr, start, end, enhID, one, two, three, tad, tissue = line.strip().split('\t')
+            cell = tissue.split('|')[1]
+            tad = tad + '\t' + cell
+            tadenh[enhID][tad] = 1
 
-    tadenh = {}
-    for line in enh_lines:
-        chr, start, end, enhID, one, two, three, tad, tissue = line.strip().split('\t')
-        cell = tissue.split('|')[1]
-        tad = tad + '\t' + cell
-        tadenh.setdefault(enhID, {})[tad] = 1
+    n = len(tadenh)
+    batch_size = 1000
+    start_idx = 0
+    count = 1
+    while start_idx < n:
+        end_idx = min(start_idx + batch_size, n)
+        count += 1
+        TADlinks_write_to_file(tadenh, tadgenes, output_file, start_idx, end_idx)
+        start_idx = end_idx
 
-    out = open(output_file, 'w')
-    final = defaultdict(lambda: defaultdict(dict))
-    for enh in tadenh.keys():
-        for tad in tadenh[enh].keys():
-            if tad in tadgenes:
-                for gene in tadgenes[tad].keys():
-                    panthID = panther_mapping.get(gene, '')
-                    cell = tad.split('\t')[1]
-                    final[enh][panthID][cell] = 1
-
-    for one in final.keys():
-        for two in final[one].keys():
-            for three in final[one][two].keys():
-                if one and two and three:
-                    out.write(f"{one}\t{two}\t{three}\t3\n")
-    out.close()
+def TADlinks_write_to_file(tadenh, tadgenes, output_file, start_idx, end_idx):
+    with open(output_file, 'a') as out:
+        for enh in tadenh.keys():
+            for tad in list(tadenh[enh].keys())[start_idx:end_idx]:
+                if tad in tadgenes:
+                    for gene in tadgenes[tad].keys():
+                        panthID = panther_mapping.get(gene, '')
+                        cell = tad.split('\t')[1]
+                        if enh and panthID and cell:
+                            out.write(f"{enh}\t{panthID}\t{cell}\t3\n")
 
 
 def tissuesReplace(input_file, output_file):
     '''
         Replace the tissues and cell types with their codes
     '''
-    tss_file = open(input_file, 'r')
-    tss_lines = tss_file.readlines()
-    tss_file.close()
-
-    out = open(output_file, 'w')
-    for line in tss_lines:
-        enhID, panthID, tiss, assay = line.strip().split('\t')
-        cell = tissues.get(tiss, '')
-        out.write(f"{enhID}\t{panthID}\t{cell}\t{assay}\n")
-    out.close()
+    with open(output_file, 'w') as out:
+        with open(input_file, 'r') as tss_file:
+            for line in tss_file:
+                line_split = line.strip().split('\t')
+                if len(line_split) == 4:
+                    enhID, panthID, tiss, assay = line_split
+                    cell = tissues.get(tiss, '')
+                    out.write(f"{enhID}\t{panthID}\t{cell}\t{assay}\n")
 
 
 def concatenate(input_files, output_file):
     '''
         makes a combined file for all tissues
     '''
-    outfile = open(output_file, 'w')
-    for file_name in input_files:
-        infile = open(file_name, 'r')
-        outfile.write(infile.read())
-        infile.close()
-    outfile.close()
+    with open(output_file, 'wb') as outfile:
+        for file_name in input_files:
+            with open(file_name, 'rb') as infile:
+                for line in infile:
+                    outfile.write(line)
     
 
 def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_file):
@@ -236,28 +232,22 @@ def orderlinks(input_file, output_file):
     print(f"This file contains {len(hash)} different enhancers linked to {len(genes)} genes in {len(tissues)} tissues.")
     print(f"Processed {count} records.")
 
-pantherGene_file = open('pantherGeneList.txt', 'r')
-pantherGene_lines = pantherGene_file.readlines()
-pantherGene_file.close()
-
 panther_mapping = {}
-for line in pantherGene_lines:
-    line_split = line.strip().split('\t')
-    panth = line_split[0]
-    ensg = line_split[1]
-    panther_mapping[ensg] = panth
-
-tissue_file = open('tissuetable_10092018.txt', 'r')
-tissue_lines = tissue_file.readlines()
-tissue_file.close()
+with open('pantherGeneList.txt', 'r') as pantherGene_file:
+    for line in pantherGene_file:
+        line_split = line.strip().split('\t')
+        panth = line_split[0]
+        ensg = line_split[1]
+        panther_mapping[ensg] = panth
 
 tissues = {}
-for line in tissue_lines:
-    line_split = line.strip().split('\t')
-    tissueID = line_split[0]
-    tissue = line_split[1]
-    tissue = tissue.replace(' ', '_')
-    tissues[tissue] = tissueID
+with open('tissuetable_10092018.txt', 'r') as tissue_file:
+    for line in tissue_file:
+        line_split = line.strip().split('\t')
+        tissueID = line_split[0]
+        tissue = line_split[1]
+        tissue = tissue.replace(' ', '_')
+        tissues[tissue] = tissueID
 
 
 bTADoverlap('ENCFF274VJU.bed', 'bTADorder', 'Caki2')
@@ -279,6 +269,8 @@ linkbTAD_list = []
 
 for chr in chromosomes:
     TADlinks(chr+'TSSbTAD', chr+'enhancersbTAD', chr+'linksbTAD')
+
+for chr in chromosomes:
     linkbTAD_list.append(chr+'linksbTAD')
 concatenate(linkbTAD_list, 'linksbTAD')
     
@@ -289,5 +281,5 @@ tissuesReplace('linkstTAD', 'linkstTADtissues')
 
 concatenate(['linksbTADtissues', 'linkstTADtissues'], 'linksTADtissues')
 
-cutdowntad('linksDBchia', 'linksDBnumeqtl', 'PSYCHIClinksDB ', 'linkstTADtissues', 'selecttTAD')
-orderlinks('selectTAD', 'linksDBtad')
+# cutdowntad('linksDBchia', 'linksDBnumeqtl', 'PSYCHIClinksDB ', 'linkstTADtissues', 'selecttTAD')
+# orderlinks('selectTAD', 'linksDBtad')
