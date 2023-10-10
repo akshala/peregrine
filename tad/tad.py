@@ -1,6 +1,5 @@
 from math import floor, ceil
 from pybedtools import BedTool
-import os
 from collections import defaultdict
 
 def bTADoverlap(input_file, output_file, cell_type):
