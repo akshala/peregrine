@@ -3,45 +3,38 @@ from pybedtools import BedTool
 from collections import defaultdict
 
 def bTADoverlap(input_file, output_file, cell_type):
-    tad_file = open(input_file, 'r')
-    tad_lines = tad_file.readlines()
-    tad_file.close()
-
     hash = {}
-    for line in tad_lines:
-        chr, start1, end1, location, pval = line.strip().split('\t')
-        score = pval + '|' + cell_type
-        location_split = location.split('___')
-        one = location_split[0]
-        two = location_split[1]
-        three = one.split('|')[2]
-        four = two.split('|')[2]
-        five = three.split(':')[1]
-        six = four.split(':')[1]
-        s1, s2 = five.split('-')
-        e1, e2 = six.split('-')
-        start = floor((int(s1) + int(s2))/2)
-        end = ceil((int(e1) + int(e2))/2)
-        total = f"{chr}\t{start}\t{end}\t{location}\t{score}"
-        hash[total] = 1
+    with open(input_file, 'r') as tad_file:
+        for line in tad_file:
+            chr, start1, end1, location, pval = line.strip().split('\t')
+            score = pval + '|' + cell_type
+            location_split = location.split('___')
+            one = location_split[0]
+            two = location_split[1]
+            three = one.split('|')[2]
+            four = two.split('|')[2]
+            five = three.split(':')[1]
+            six = four.split(':')[1]
+            s1, s2 = five.split('-')
+            e1, e2 = six.split('-')
+            start = floor((int(s1) + int(s2))/2)
+            end = ceil((int(e1) + int(e2))/2)
+            total = f"{chr}\t{start}\t{end}\t{location}\t{score}"
+            hash[total] = 1
 
-    out = open(output_file, 'w')
-    for key in sorted(hash.keys()):
-        out.write(key + '\n')
-    out.close()
+    with open(output_file, 'w') as out:
+        for key in sorted(hash.keys()):
+            out.write(key + '\n')
 
 
 def tTADOverlap(input_file, output_file, cell_type):
-    tad_file = open(input_file, 'r')
-    tad_lines = tad_file.readlines()
-    tad_file.close()
-
     out = open(output_file, 'w')
 
-    for line in tad_lines:
-        chr, start, end, location, pval = line.strip().split('\t')
-        score = pval + '|' + cell_type
-        out.write(f"{chr}\t{start}\t{end}\t{location}\t{score}\n")
+    with open(input_file, 'r') as tad_file:
+        for line in tad_file:
+            chr, start, end, location, pval = line.strip().split('\t')
+            score = pval + '|' + cell_type
+            out.write(f"{chr}\t{start}\t{end}\t{location}\t{score}\n")
     out.close()
 
 
@@ -67,17 +60,14 @@ def split(file):
     chromosomes.append('chrX')
     chromosomes.append('chrY')
 
-    tad_file = open(file, 'r')
-    tad_lines = tad_file.readlines()
-    tad_file.close()
-
     output_files = {chromosome: open(chromosome + file, 'w') for chromosome in chromosomes}
 
-    for line in tad_lines:
-        chr = line.strip().split('\t')[0]
+    with open(file, 'r') as tad_file:
+        for line in tad_file:
+            chr = line.strip().split('\t')[0]
 
-        if chr in chromosomes:
-            output_files[chr].write(line)
+            if chr in chromosomes:
+                output_files[chr].write(line)
 
     for output_file in output_files.values():
         output_file.close()
@@ -173,33 +163,25 @@ def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_fil
     for line in chia_lines:
         line_parse(line, hash)
 
-    eqtl = open(eqtl_file, 'r')
-    eqtl_lines = eqtl.readlines()
-    eqtl.close()
+    with open(eqtl_file, 'r') as eqtl:
+        for line in eqtl:
+            line_parse(line, hash)
 
-    for line in eqtl_lines:
-        line_parse(line, hash)
+    with open(heirarchical_tad_file, 'r') as heirarchical:
+        for line in heirarchical:
+            line_parse(line, hash)
 
-    heirarchical = open(heirarchical_tad_file, 'r')
-    heirarchical_lines = heirarchical.readlines()
-    heirarchical.close()
-
-    for line in heirarchical_lines:
-        line_parse(line, hash)
-
-    tad = open(tad_file, 'r')
-    tad_lines = tad.readlines()
-    tad.close()
-
-    for line in tad_lines:
-        enhancer, panthid, tissue, assay = line.strip().split('\t')
-        link = enhacer + '_' + panthid
-        rest = f"{enhancer}\t{panthid}\t{tissue}\t{assay}"
-        if link in hash:
-            count1 += 1
-            output_file.write(f"{rest}\n")
-        else:
-            count2 += 1
+    with open(output_file, 'w') as out:
+        with open(tad_file, 'r') as tad:
+            for line in tad:
+                enhancer, panthid, tissue, assay = line.strip().split('\t')
+                link = enhacer + '_' + panthid
+                rest = f"{enhancer}\t{panthid}\t{tissue}\t{assay}"
+                if link in hash:
+                    count1 += 1
+                    out.write(f"{rest}\n")
+                else:
+                    count2 += 1
 
     out = open(output_file, 'w')
     print(f"Number of TAD links found in TADintxn, eQTL, or ChIA: {count1}")
@@ -207,26 +189,24 @@ def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_fil
 
 
 def orderlinks(input_file, output_file):
-    input = open(input_file, 'r')
-    input_lines = input.readlines()
-    input.close()
-
     hash = {}
     tissues = {}
     genes = {}
     count = 0
 
-    for line in lines:
-        enhID, gene, tissue, assay = line.strip().split('\t')
-        hash.setdefault(enhID, {}).setdefault(gene, {})[tissue] = 1
+    with open(input_file, 'r') as input:
+        for line in input:
+            enhID, gene, tissue, assay = line.strip().split('\t')
+            hash.setdefault(enhID, {}).setdefault(gene, {})[tissue] = 1
 
-    for enhancer in sorted(hash.keys()):
-        for geen in sorted(hash[enhancer].keys()):
-            genes[geen] = 1
-            for cell in sorted(hash[enhancer][geen].keys()):
-                tissues[cell] = 1
-                count += 1
-                out.write(f"{enhancer}\t{geen}\t{cell}\t{assay}\n")
+    with open(output_file, 'w') as out:
+        for enhancer in sorted(hash.keys()):
+            for geen in sorted(hash[enhancer].keys()):
+                genes[geen] = 1
+                for cell in sorted(hash[enhancer][geen].keys()):
+                    tissues[cell] = 1
+                    count += 1
+                    out.write(f"{enhancer}\t{geen}\t{cell}\t{assay}\n")
 
     print(f"This file contains {len(hash)} different enhancers linked to {len(genes)} genes in {len(tissues)} tissues.")
     print(f"Processed {count} records.")
