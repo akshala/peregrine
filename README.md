@@ -7,7 +7,7 @@ To get the final Peregrine data which consists of enhancer-gene links run the fo
 ```
 
 This final data is coming from 4 different data sources. 
-1. [eQTL](eQTL/README.md)
-2. [heirarchical TAD](heirarchicalTAD/README.md)
-3. [TAD](tad/README.md)
+1. [eQTL](eQTL/)
+2. [heirarchical TAD](heirarchicalTAD/)
+3. [TAD](tad/)
 4. ChIA-PET
