@@ -1,5 +1,11 @@
 # Peregrine
 
+To get the final Peregrine data run the following bash script command
+
+```
+./steps.sh
+```
+
 ## eQTL
 The eQTL folder has the code for generating enhancer-gene links from eQTL data taken from the source - https://storage.googleapis.com/gtex_analysis_v7/single_tissue_eqtl_data/GTEx_Analysis_v7_eQTL.tar.gz. 
 
@@ -51,4 +57,10 @@ The tad folder has the code for generating enhancer-gene links from  TAD data ta
 
 ```
 python3 tad/tad.py
+```
+
+If there is any memory issue in running this code then the bash script for TAD can be run which runs different TAD script files (they are just the original ta.py file divided into separate python files to ease with memory release.)
+
+```
+./tad.sh
 ```
