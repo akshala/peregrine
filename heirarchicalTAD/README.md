@@ -7,6 +7,7 @@ python3 heirarchicalTAD.py
 
 Running the above command results in PSYCHIClinksDB enhancer-gene links file.
 
+#### PSYCHIClinksDB
 ```
 $ head PSYCHIClinksDB 
 EH37E0105481	HUMAN|HGNC=15846|UniProtKB=Q9NP74	49	5.4e-14	4
