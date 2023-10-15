@@ -202,7 +202,7 @@ def concatenate(input_files, output_file):
     '''
         makes a combined file for all tissues
     '''
-    with open(output_file, 'w') as outfile
+    with open(output_file, 'w') as outfile:
         for file_name in input_files:
             infile = open(file_name, 'r')
             outfile.write(infile.read())
@@ -247,7 +247,6 @@ for gene_pair_gz_file in gene_pair_gz_files:
     trim(os.path.join(folder, gene_pair_file))
 
     tissue = gene_pair_file.split('.')[0]
-    print(tissue)
 
     eqtl_process(os.path.join(folder, 'newdata' + gene_pair_file), os.path.join(folder, tissue + '_eqtl'))
 
