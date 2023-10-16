@@ -92,7 +92,7 @@ def eliminateOverlap(input_file, output_file, overlap_file, unmatched_file):
     '''
     hash = {}
     with open('exons_genes.txt', 'r') as exon_file:
-        for line in exon_lines:
+        for line in exon_file:
             line_split = line.strip().split('\t')
             chr = line_split[0]
             start = line_split[1]
@@ -218,7 +218,7 @@ with open('pantherGeneList.txt', 'r') as pantherGene_file:
 
 tissues = {}
 with open('tissuetable_10092018.txt', 'r') as tissue_file:
-    for line in tissue_lines:
+    for line in tissue_file:
         line_split = line.strip().split('\t')
         tissueID = line_split[0]
         tissue = line_split[1]
