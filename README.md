@@ -10,4 +10,4 @@ This final data is coming from 4 different data sources.
 1. [eQTL](eQTL/)
 2. [heirarchical TAD](heirarchicalTAD/)
 3. [TAD](tad/)
-4. ChIA-PET
+4. [ChIA-PET](chia_pet/)

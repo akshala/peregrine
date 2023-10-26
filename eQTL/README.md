@@ -2,7 +2,7 @@
 The eQTL folder has the code for generating enhancer-gene links from eQTL data taken from the source - https://storage.googleapis.com/gtex_analysis_v7/single_tissue_eqtl_data/GTEx_Analysis_v7_eQTL.tar.gz. 
 
 ```
-python3 eqtl.py
+python eqtl.py
 ```
 
 Running the above command generates linksDBeqtl and linksDBnumeqtl files that are the concatention of all the files of respective nature generated from different tissue variant gene pair files. 

@@ -2,7 +2,7 @@
 The heirarchicalTAD folder has the code for generating enhancer-gene links from heirarchical TAD data taken from the source - https://www.cs.huji.ac.il/w~tommy/PSYCHIC/. All the 1e-4 bed files from this source are taken and then filtered on the basis of the tissue file before processing. 
 
 ```
-python3 heirarchicalTAD.py
+python heirarchicalTAD.py
 ```
 
 Running the above command results in PSYCHIClinksDB enhancer-gene links file.
