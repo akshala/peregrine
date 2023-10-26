@@ -12,3 +12,5 @@ This final data is coming from 4 different data sources.
 2. [heirarchical TAD](heirarchicalTAD/)
 3. [TAD](tad/)
 4. [ChIA-PET](chia_pet/)
+
+The above folders contain the data, code and details for each of the data sources. 
