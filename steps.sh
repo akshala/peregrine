@@ -1,9 +1,19 @@
+#!/bin/bash
+
+python3 -m venv venv
+pip install -r requirements.txt
+source venv/bin/activate
+
 cd eQTL
-python3 eqtl.py
+python eqtl.py
 
 cd ../heirarchicalTAD
-python3 heirarchicalTAD.py
+python heirarchicalTAD.py
 
 cd ../tad
 ./tad.sh
-cd ../
+
+cd ../chia_pet
+python ChIA_PET.py
+
+deactivate
