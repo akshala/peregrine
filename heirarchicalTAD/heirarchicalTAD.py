@@ -72,10 +72,10 @@ def HGNC2PANTH(input_file, output_file, unmatched_file, tissue_name):
         hash2[symbol] = uniprot
         hash3[symbol] = ensg
 
-    out = open(output_file, 'w')
-    unmatched = open(unmatched_file, 'w')
+    out = 
+    unmatched = 
 
-    with open(input_file, 'r') as input:
+    with open(input_file, 'r') as input, open(output_file, 'w') as out, open(unmatched_file, 'w') as unmatched:
         for line in input:
             echr, estart, eend, enhID, pchr, pstart, pend, mix = line.strip().split('\t')
             mix_split = mix.split(':')
@@ -105,9 +105,6 @@ def HGNC2PANTH(input_file, output_file, unmatched_file, tissue_name):
             else:
                 unmatched.write(f'2\t{line}\n')
 
-    out.close()
-    unmatched.close()
-
 
 def reformat(input_file, output_file):
     hash = {}
@@ -126,17 +123,16 @@ def tissuesReplace(input_file, output_file):
     '''
         Replace the tissues and cell types with their codes
     '''
-    with open(input_file, 'r') as tss_file:
-        with open(output_file, 'w') as out:
-            for line in tss_file:
-                line_split = line.strip().split('\t')
-                enhID = line_split[3]
-                gene = line_split[4]
-                tissue = line_split[5]
-                tissue_code = tissues.get(tissue, '')
-                pval = line_split[-1]
-                assay = 4
-                out.write(f"{enhID}\t{gene}\t{tissue_code}\t{pval}\t{assay}\n")
+    with open(input_file, 'r') as tss_file, open(output_file, 'w') as out:
+        for line in tss_file:
+            line_split = line.strip().split('\t')
+            enhID = line_split[3]
+            gene = line_split[4]
+            tissue = line_split[5]
+            tissue_code = tissues.get(tissue, '')
+            pval = line_split[-1]
+            assay = 4
+            out.write(f"{enhID}\t{gene}\t{tissue_code}\t{pval}\t{assay}\n")
 
 
 def concatenate(input_files, output_file):

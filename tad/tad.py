@@ -28,14 +28,11 @@ def bTADoverlap(input_file, output_file, cell_type):
 
 
 def tTADOverlap(input_file, output_file, cell_type):
-    out = open(output_file, 'w')
-
-    with open(input_file, 'r') as tad_file:
+    with open(input_file, 'r') as tad_file, open(output_file, 'w') as out:
         for line in tad_file:
             chr, start, end, location, pval = line.strip().split('\t')
             score = pval + '|' + cell_type
             out.write(f"{chr}\t{start}\t{end}\t{location}\t{score}\n")
-    out.close()
 
 
 def bedtoolIntersect(gene_file, tad_order_file, output_file):
@@ -46,10 +43,9 @@ def bedtoolIntersect(gene_file, tad_order_file, output_file):
     tad_order_file_bedtoolFile = BedTool(tad_order_file)
 
     intersection = gene_file_bedtoolFile.intersect(tad_order_file_bedtoolFile, wa=True, wb=True, f=0.9)
-    out = open(output_file, 'w')
-    for elt in intersection:
-        out.write(str(elt))
-    out.close()
+    with open(output_file, 'w') as out:
+        for elt in intersection:
+            out.write(str(elt))
 
 
 def split(file):
@@ -120,14 +116,13 @@ def tissuesReplace(input_file, output_file):
     '''
         Replace the tissues and cell types with their codes
     '''
-    with open(output_file, 'w') as out:
-        with open(input_file, 'r') as tss_file:
-            for line in tss_file:
-                line_split = line.strip().split('\t')
-                if len(line_split) == 4:
-                    enhID, panthID, tiss, assay = line_split
-                    cell = tissues.get(tiss, '')
-                    out.write(f"{enhID}\t{panthID}\t{cell}\t{assay}\n")
+    with open(output_file, 'w') as out, open(input_file, 'r') as tss_file:
+        for line in tss_file:
+            line_split = line.strip().split('\t')
+            if len(line_split) == 4:
+                enhID, panthID, tiss, assay = line_split
+                cell = tissues.get(tiss, '')
+                out.write(f"{enhID}\t{panthID}\t{cell}\t{assay}\n")
 
 
 def concatenate(input_files, output_file):
@@ -171,21 +166,18 @@ def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_fil
         for line in heirarchical:
             line_parse(line, hash)
 
-    with open(output_file, 'w') as out:
-        with open(tad_file, 'r') as tad:
-            for line in tad:
-                enhancer, panthid, tissue, assay = line.strip().split('\t')
-                link = enhacer + '_' + panthid
-                rest = f"{enhancer}\t{panthid}\t{tissue}\t{assay}"
-                if link in hash:
-                    count1 += 1
-                    out.write(f"{rest}\n")
-                else:
-                    count2 += 1
+    with open(output_file, 'w') as out, open(tad_file, 'r') as tad:
+        for line in tad:
+            enhancer, panthid, tissue, assay = line.strip().split('\t')
+            link = enhacer + '_' + panthid
+            rest = f"{enhancer}\t{panthid}\t{tissue}\t{assay}"
+            if link in hash:
+                count1 += 1
+                out.write(f"{rest}\n")
+            else:
+                count2 += 1
 
-    out = open(output_file, 'w')
     print(f"Number of TAD links found in TADintxn, eQTL, or ChIA: {count1}")
-    print(f"Number of links found only in TAD data: {count2}")
 
 
 def orderlinks(input_file, output_file):
@@ -209,7 +201,6 @@ def orderlinks(input_file, output_file):
                     out.write(f"{enhancer}\t{geen}\t{cell}\t{assay}\n")
 
     print(f"This file contains {len(hash)} different enhancers linked to {len(genes)} genes in {len(tissues)} tissues.")
-    print(f"Processed {count} records.")
 
 panther_mapping = {}
 with open('pantherGeneList.txt', 'r') as pantherGene_file:

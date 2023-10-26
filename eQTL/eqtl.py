@@ -68,10 +68,8 @@ def pantherIDweed(input_file, output_file, leftover_file):
     '''
     count1 = 0
     count2 = 0
-    out = open(output_file, 'w')
-    leftover = open(leftover_file, 'w')
 
-    with open(input_file, 'r') as eqtl_file:
+    with open(input_file, 'r') as eqtl_file, open(output_file, 'w') as out, open(leftover_file, 'w') as leftover:
         for line in eqtl_file:
             one, two, three, four, five = line.strip().split('\t')
             three = five.split('.')[0]
@@ -83,8 +81,7 @@ def pantherIDweed(input_file, output_file, leftover_file):
             else:
                 count2 += 1
                 leftover.write(line)
-    out.close()
-    leftover.close()
+
 
 def eliminateOverlap(input_file, output_file, overlap_file, unmatched_file):
     '''
@@ -107,9 +104,8 @@ def eliminateOverlap(input_file, output_file, overlap_file, unmatched_file):
     count2 = 0
     out_dict = {}
     overlap_dict = {}
-    unmatched = open(unmatched_file, 'w')
 
-    with open(input_file, 'r') as eqtl_file:
+    with open(input_file, 'r') as eqtl_file, open(unmatched_file, 'w') as unmatched:
         for line in eqtl_file:
             line = line.strip()
             one, two, three, four, five = line.split('\t')
@@ -132,15 +128,13 @@ def eliminateOverlap(input_file, output_file, overlap_file, unmatched_file):
             else:
                 unmatched.write(line)
 
-    unmatched.close()
-    out = open(output_file, 'w')
-    for key in sorted(out_dict.keys()):
-        out.write(key + '\n')
-    out.close()
-    overlap = open(overlap_file, 'w')
-    for key in sorted(overlap_dict.keys()):
-        overlap.write(key + '\n')
-    overlap.close()
+    with open(output_file, 'w') as out:
+        for key in sorted(out_dict.keys()):
+            out.write(key + '\n')
+
+    with open(overlap_file, 'w') as overlap:
+        for key in sorted(overlap_dict.keys()):
+            overlap.write(key + '\n')
 
 def bedtoolIntersect(cred_file, eqtl_file, output_file):
     '''
@@ -150,10 +144,9 @@ def bedtoolIntersect(cred_file, eqtl_file, output_file):
     eqtl_file_bedtoolFile = BedTool(eqtl_file)
 
     intersection = cred_file_bedtoolFile.intersect(eqtl_file_bedtoolFile, wa=True, wb=True)
-    out = open(output_file, 'w')
-    for elt in intersection:
-        out.write(str(elt))
-    out.close()
+    with open(output_file, 'w') as out:
+        for elt in intersection:
+            out.write(str(elt))
 
 def eqtllinks(input_file, output_file):
     '''

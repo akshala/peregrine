@@ -1,14 +1,13 @@
 from pybedtools import BedTool
 
 def celltypev2(input_file, cell_type, output_file):
-    with open(input_file, 'r') as input:
-        with open(output_file, 'w') as out:
-            for line in input:
-                chr1, start1, end1, chr2, start2, end2, number, pval = line.strip().split('\t')
-                name = f"{chr1}:{start1}..{end1}-{chr2}:{start2}..{end2}"
-                column = f"{tadcell}_{pval}"
-                out.write(f"{chr1}\t{start1}\t{end1}\t{name}\t{column}\n")
-                out.write(f"{chr2}\t{start2}\t{end2}\t{name}\t{column}\n")
+    with open(input_file, 'r') as input, open(output_file, 'w') as out:
+        for line in input:
+            chr1, start1, end1, chr2, start2, end2, number, pval = line.strip().split('\t')
+            name = f"{chr1}:{start1}..{end1}-{chr2}:{start2}..{end2}"
+            column = f"{tadcell}_{pval}"
+            out.write(f"{chr1}\t{start1}\t{end1}\t{name}\t{column}\n")
+            out.write(f"{chr2}\t{start2}\t{end2}\t{name}\t{column}\n")
 
 
 def bedtoolIntersect(gene_file, input_file, output_file):
@@ -26,7 +25,6 @@ def bedtoolIntersect(gene_file, input_file, output_file):
 
 def chiageneTSS(input_file, output_file):
     hash = {}
-
     with open(input_file, 'r') as input:
         for line in input:
             gene, tss, end, start, strand, chr = line.strip().split('\t')
@@ -43,14 +41,14 @@ def chiageneTSS(input_file, output_file):
                 key = f"{chr}\t{start}\t{end}\t{gene}"
                 hash[gene] = key
 
-        final = {}
-        for ensgene in sorted(panther_mapping.keys()):
-            if ensgene in hash:
-                line = hash[ensgene]
+    final = {}
+    for ensgene in sorted(panther_mapping.keys()):
+        if ensgene in hash:
+            line = hash[ensgene]
 
-        with open(output_file, 'w') as out:
-            for line in sorted(final.keys()):
-                out.write(line + '\n')
+    with open(output_file, 'w') as out:
+        for line in sorted(final.keys()):
+            out.write(line + '\n')
 
 
 def chiagenesenhancers(input_file, gene_file, output_file):
