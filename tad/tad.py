@@ -140,10 +140,6 @@ def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_fil
     '''
         only want to include the TAD links that support existing links from ChIA-PET or eQTL data
     '''
-    chia = open(chia_file, 'r')
-    chia_lines = chia.readlines()
-    chia.close()
-
     hash = {}
     count1 = 0
     count2 = 0
@@ -152,11 +148,12 @@ def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_fil
         line_split = line.strip().split('\t')
         enhancer = line_split[0]
         panthid = line_split[1]
-        link = enhacer + '_' + panthid
+        link = enhancer + '_' + panthid
         hash[link] = 1
 
-    for line in chia_lines:
-        line_parse(line, hash)
+    with open(chia_file, 'r') as chia:
+        for line in chia:
+            line_parse(line, hash)
 
     with open(eqtl_file, 'r') as eqtl:
         for line in eqtl:
@@ -169,7 +166,7 @@ def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_fil
     with open(output_file, 'w') as out, open(tad_file, 'r') as tad:
         for line in tad:
             enhancer, panthid, tissue, assay = line.strip().split('\t')
-            link = enhacer + '_' + panthid
+            link = enhancer + '_' + panthid
             rest = f"{enhancer}\t{panthid}\t{tissue}\t{assay}"
             if link in hash:
                 count1 += 1
