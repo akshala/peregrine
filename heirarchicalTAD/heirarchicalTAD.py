@@ -29,10 +29,7 @@ def idmapping_processing():
     df.to_csv('resultsHGNC.txt', sep='\t', index=False)
 
 def nonegvalues(input_file, output_file, out_file):
-    tossed_out = open(out_file, 'w')
-    out = open(output_file, 'w')
-
-    with open(input_file, 'r') as bed_file:
+    with open(input_file, 'r') as bed_file, open(out_file, 'w') as tossed_out, open(output_file, 'w') as out:
         for line in bed_file:
             line_split = line.strip().split('\t')
             start = line_split[1]
@@ -41,9 +38,6 @@ def nonegvalues(input_file, output_file, out_file):
                 tossed_out.write(line)
             else:
                 out.write(line)
-
-    tossed_out.close()
-    out.close()
 
 
 def bedtoolIntersect(cred_file, eqtl_file, output_file):
@@ -72,8 +66,6 @@ def HGNC2PANTH(input_file, output_file, unmatched_file, tissue_name):
         hash2[symbol] = uniprot
         hash3[symbol] = ensg
 
-    out = 
-    unmatched = 
 
     with open(input_file, 'r') as input, open(output_file, 'w') as out, open(unmatched_file, 'w') as unmatched:
         for line in input:
