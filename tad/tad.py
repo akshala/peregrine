@@ -136,7 +136,7 @@ def concatenate(input_files, output_file):
                     outfile.write(line)
     
 
-def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_file):
+def cutdowntad(eqtl_file, heirarchical_tad_file, tad_file, output_file):
     '''
         only want to include the TAD links that support existing links from ChIA-PET or eQTL data
     '''
@@ -150,10 +150,6 @@ def cutdowntad(chia_file, eqtl_file, heirarchical_tad_file, tad_file, output_fil
         panthid = line_split[1]
         link = enhancer + '_' + panthid
         hash[link] = 1
-
-    with open(chia_file, 'r') as chia:
-        for line in chia:
-            line_parse(line, hash)
 
     with open(eqtl_file, 'r') as eqtl:
         for line in eqtl:
@@ -248,5 +244,5 @@ tissuesReplace('linkstTAD', 'linkstTADtissues')
 
 concatenate(['linksbTADtissues', 'linkstTADtissues'], 'linksTADtissues')
 
-# cutdowntad('linksDBchia', 'linksDBnumeqtl', 'PSYCHIClinksDB ', 'linkstTADtissues', 'selecttTAD')
-# orderlinks('selectTAD', 'linksDBtad')
+cutdowntad('linksDBnumeqtl', 'PSYCHIClinksDB ', 'linkstTADtissues', 'selecttTAD')
+orderlinks('selectTAD', 'linksDBtad')
